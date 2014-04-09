@@ -20,8 +20,10 @@ namespace HandHistories.Objects.GameDescription
 
             return new TableType(
                 tableTypeDescriptionStrings
-                    .Select(t => (TableTypeDescription)Enum.Parse(typeof(TableTypeDescription), t))
-                );
+                    .Select(t => (TableTypeDescription)Enum.Parse(typeof(TableTypeDescription), t, true))
+                    .Distinct()
+                    .ToArray()
+                );           
         }
 
         public static TableType FromTableTypeDescriptions(params TableTypeDescription[] tableTypeDescriptions)

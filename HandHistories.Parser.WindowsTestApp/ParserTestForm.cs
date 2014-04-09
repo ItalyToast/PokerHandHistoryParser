@@ -16,7 +16,8 @@ namespace HandHistories.Parser.WindowsTestApp
         public ParserTestForm()
         {
             InitializeComponent();
-            
+
+            listBoxSite.Items.Add(SiteName.BossMedia);
             listBoxSite.Items.Add(SiteName.PokerStars);
             listBoxSite.Items.Add(SiteName.PokerStarsFr);
             listBoxSite.Items.Add(SiteName.PokerStarsIt);
@@ -30,6 +31,7 @@ namespace HandHistories.Parser.WindowsTestApp
             listBoxSite.Items.Add(SiteName.Pacific);
             listBoxSite.Items.Add(SiteName.Entraction);
             listBoxSite.Items.Add(SiteName.Merge);
+            listBoxSite.Items.Add(SiteName.WinningPoker);
         }
 
         private void buttonParse_Click(object sender, EventArgs e)

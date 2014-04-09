@@ -60,12 +60,13 @@ namespace HandHistories.Parser.Parsers.FastParser.Base
             {
                 string[] lines = SplitHandsLines(handText);
 
-                if (IsValidHand(lines) == false)
+                bool isCancelled;
+                if (IsValidOrCancelledHand(lines, out isCancelled) == false)
                 {
                     throw new InvalidHandException(handText ?? "NULL");
                 }                
 
-                return ParseFullHandSummary(lines);
+                return ParseFullHandSummary(lines, isCancelled);
             }
             catch (Exception ex)
             {
@@ -79,10 +80,11 @@ namespace HandHistories.Parser.Parsers.FastParser.Base
             }     
         }
 
-        protected HandHistorySummary ParseFullHandSummary(string[] handLines)
+        protected HandHistorySummary ParseFullHandSummary(string[] handLines, bool isCancelled = false)
         {
             HandHistorySummary handHistorySummary = new HandHistorySummary();
-                            
+
+            handHistorySummary.Cancelled = isCancelled;
             handHistorySummary.DateOfHandUtc = ParseDateUtc(handLines);
             handHistorySummary.GameDescription = ParseGameDescriptor(handLines);
             handHistorySummary.HandId = ParseHandId(handLines);
@@ -92,10 +94,10 @@ namespace HandHistories.Parser.Parsers.FastParser.Base
             handHistorySummary.FullHandHistoryText = string.Join("\r\n", handLines);
 
             try
-            {
+            {                
                 ParseExtraHandInformation(handLines, handHistorySummary);
             }
-            catch (Exception ex)
+            catch
             {
                 throw new ExtraHandParsingAction(handLines[0]);
             }            
@@ -114,7 +116,8 @@ namespace HandHistories.Parser.Parsers.FastParser.Base
             {
                 string[] handLines = SplitHandsLines(handText);
 
-                if (IsValidHand(handLines) == false)
+                bool isCancelled;
+                if (IsValidOrCancelledHand(handLines, out isCancelled) == false)
                 {
                     throw new InvalidHandException(handText ?? "NULL");                    
                 }
@@ -128,9 +131,15 @@ namespace HandHistories.Parser.Parsers.FastParser.Base
                 handHistory.DealerButtonPosition = ParseDealerPosition(handLines);
                 handHistory.FullHandHistoryText = string.Join("\r\n", handLines);
                 handHistory.ComumnityCards = ParseCommunityCards(handLines);
+                handHistory.Cancelled = isCancelled;
 
                 handHistory.Players = ParsePlayers(handLines);
                 handHistory.NumPlayersSeated = handHistory.Players.Count;
+
+                if (handHistory.Cancelled)
+                {
+                    return handHistory;
+                }
 
                 if (handHistory.Players.Count(p => p.IsSittingOut == false) <= 1)
                 {
@@ -324,12 +333,19 @@ namespace HandHistories.Parser.Parsers.FastParser.Base
             } 
         }
 
-        public  bool IsValidHand(string handText)
+        public bool IsValidHand(string handText)
         {
             return IsValidHand(SplitHandsLines(handText));
         }
 
         public abstract bool IsValidHand(string[] handLines);
+
+        public bool IsValidOrCancelledHand(string handText, out bool isCancelled)
+        {
+            return IsValidOrCancelledHand(SplitHandsLines(handText), out isCancelled);
+        }
+
+        public abstract bool IsValidOrCancelledHand(string[] handLines, out bool isCancelled);
 
         public List<HandAction> ParseHandActions(string handText)
         {

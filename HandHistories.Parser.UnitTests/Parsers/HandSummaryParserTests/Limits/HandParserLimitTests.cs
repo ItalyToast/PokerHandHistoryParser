@@ -1,6 +1,7 @@
 ﻿using HandHistories.Objects.GameDescription;
 using HandHistories.Parser.UnitTests.Parsers.Base;
 using NUnit.Framework;
+using System.Globalization;
 
 namespace HandHistories.Parser.UnitTests.Parsers.HandSummaryParserTests.Limits
 {
@@ -15,6 +16,8 @@ namespace HandHistories.Parser.UnitTests.Parsers.HandSummaryParserTests.Limits
     [TestFixture("FullTilt", "$0.05-$0.10", "$0.50-$1", "$5-$10", "$300-$600", "$2,000-$4,000")]
     [TestFixture("MicroGaming", "e0.01-e0.02", "e0.50-e1", "e1-e2")]
     [TestFixture("Winamax", "e0.05-e0.10", "e0.50-e1", "e5-e10")]
+    [TestFixture("WinningPoker", "$2-$4", "$2-$4", "$0.10-$0.25")]
+    [TestFixture("BossMedia", "$100-$200", "$5-$10", "$0.02-$0.04")]
     class HandParserLimitTests : HandHistoryParserBaseTests
     {
         private readonly string[] _expectedLimits;
@@ -41,8 +44,8 @@ namespace HandHistories.Parser.UnitTests.Parsers.HandSummaryParserTests.Limits
         {
             string handText = SampleHandHistoryRepository.GetLimitExampleHandHistoryText(PokerFormat.CashGame, Site, fileName);
             
-            Assert.AreEqual(expectedLimitString.Replace("e", "€"), GetSummmaryParser().ParseLimit(handText).ToString(), "IHandHistorySummaryParser: ParseLimit");
-            Assert.AreEqual(expectedLimitString.Replace("e", "€"), GetParser().ParseLimit(handText).ToString(), "IHandHistoryParser: ParseLimit");
+            Assert.AreEqual(expectedLimitString.Replace("e", "€"), GetSummmaryParser().ParseLimit(handText).ToString(CultureInfo.InvariantCulture), "IHandHistorySummaryParser: ParseLimit");
+            Assert.AreEqual(expectedLimitString.Replace("e", "€"), GetParser().ParseLimit(handText).ToString(CultureInfo.InvariantCulture), "IHandHistoryParser: ParseLimit");
         }
 
         [TestCase(1)]
@@ -70,6 +73,8 @@ namespace HandHistories.Parser.UnitTests.Parsers.HandSummaryParserTests.Limits
                 case SiteName.FullTilt:
                 case SiteName.Entraction:
                 case SiteName.Winamax:
+                case SiteName.WinningPoker:
+                case SiteName.BossMedia:
                     Assert.Ignore(Site.ToString() + " doesn't have ante tables.");
                     break;               
                 
@@ -78,7 +83,7 @@ namespace HandHistories.Parser.UnitTests.Parsers.HandSummaryParserTests.Limits
             // Stars does not contain ante information in the limit so we actually add it once we have parsed all the actions
             string handText = SampleHandHistoryRepository.GetLimitExampleHandHistoryText(PokerFormat.CashGame, Site, "AnteTable");
             string expectedLimitString = "$0.10-$0.25-Ante-$0.05";
-            Assert.AreEqual(expectedLimitString, GetParser().ParseFullHandHistory(handText).GameDescription.Limit.ToString(), "IHandHistoryParser: ParseLimit");
+            Assert.AreEqual(expectedLimitString, GetParser().ParseFullHandHistory(handText).GameDescription.Limit.ToString().Replace(',', '.'), "IHandHistoryParser: ParseLimit");
         }
 
         [Test]
@@ -92,6 +97,8 @@ namespace HandHistories.Parser.UnitTests.Parsers.HandSummaryParserTests.Limits
                 case SiteName.Merge:
                 case SiteName.FullTilt:
                 case SiteName.Winamax:
+                case SiteName.WinningPoker:
+                case SiteName.BossMedia:
                     Assert.Ignore("Site doesn't have euro tables ( example ).");
                     break;
                 case SiteName.Entraction:
@@ -117,6 +124,8 @@ namespace HandHistories.Parser.UnitTests.Parsers.HandSummaryParserTests.Limits
                 case SiteName.FullTilt:
                 case SiteName.Winamax:
                 case SiteName.PokerStars:
+                case SiteName.WinningPoker:
+                case SiteName.BossMedia:
                     Assert.Ignore("Site doesn't have euro tables.");
                     break;
                 default:
