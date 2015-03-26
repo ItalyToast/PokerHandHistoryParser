@@ -305,7 +305,13 @@ namespace HandHistories.Parser.Parsers.FastParser.FullTiltPoker
                         continue;
 
                     //theking881 calls $138, and is all in
+                    //KOCTAH sits down
                     case 'n':
+                        if (line[line.Length - 2] == 'w')
+                        {
+                            continue;
+                        }
+
                         action = ParseActionWithAmount(line.Remove(line.Length - 15), currentStreet, true);//", and is all in".Length
                         if (action != null)
                         {
@@ -344,6 +350,8 @@ namespace HandHistories.Parser.Parsers.FastParser.FullTiltPoker
                     case 't':
                     //Dealt to FT_Hero [Qh 5c]
                     case ']':
+                    //thaeee stands up
+                    case 'p':
                         continue;
 
                     default:

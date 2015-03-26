@@ -217,6 +217,9 @@
     <Content Include="SampleHandHistories\FullTilt\CashGame\HandActionTests\3BetHand.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SampleHandHistories\FullTilt\CashGame\HandActionTests\AddingMidHand.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleHandHistories\FullTilt\CashGame\HandActionTests\AllInHandWithShowdown.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

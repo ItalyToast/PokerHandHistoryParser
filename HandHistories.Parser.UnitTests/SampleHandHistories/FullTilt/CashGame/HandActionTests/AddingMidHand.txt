@@ -1,0 +1,29 @@
+﻿Full Tilt Poker Game #35342725569: Table Forhan (6 max, ante, deep) - NL Hold'em - $1/$2 Ante $0.30 - 12:15:11 ET - 2015/03/06
+Seat 2: Zolee21 ($200)
+Seat 3: bestusernamEver ($399.10)
+Seat 4: thaeee ($200)
+Seat 6: kikepokero ($169.75)
+Zolee21 posts the small blind of $1
+bestusernamEver posts the big blind of $2
+The button is in seat #6
+*** HOLE CARDS ***
+thaeee folds
+thaeee adds $0.30
+KOCTAH sits down
+kikepokero folds
+thaeee stands up
+Zolee21 raises to $6
+bestusernamEver has 15 seconds left to act
+KOCTAH adds $300
+bestusernamEver calls $4
+*** FLOP *** [4h Tc Qc] (Total Pot: $13.20, 2 Players)
+thaeee sits down
+thaeee adds $199.70
+Zolee21 adds $6.30
+*** SUMMARY ***
+Total pot $13.20 | Rake $0.65
+Board: [4h Tc Qc]
+Seat 2: Zolee21 (small blind) folded on the Flop
+Seat 3: bestusernamEver (big blind) collected ($12.55), mucked
+Seat 4: thaeee folded before the Flop
+Seat 6: kikepokero (button) folded before the Flop

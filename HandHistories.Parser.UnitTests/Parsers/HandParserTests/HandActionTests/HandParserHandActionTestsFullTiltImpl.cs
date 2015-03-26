@@ -14,6 +14,23 @@ namespace HandHistories.Parser.UnitTests.Parsers.HandParserTests.HandActionTests
         {
         }
 
+        [Test]
+        public void PlayerAddingMidHand_Works()
+        {
+            List<HandAction> expectedActions = new List<HandAction>()
+                {
+                    new HandAction("Zolee21", HandActionType.SMALL_BLIND, 1m, Street.Preflop),
+                    new HandAction("bestusernamEver", HandActionType.BIG_BLIND, 2m, Street.Preflop),
+
+                    new HandAction("thaeee", HandActionType.FOLD, 0, Street.Preflop),
+                    new HandAction("kikepokero", HandActionType.FOLD, 0m, Street.Preflop),
+                    new HandAction("Zolee21", HandActionType.RAISE, 5m, Street.Preflop),
+                    new HandAction("bestusernamEver", HandActionType.CALL, 4, Street.Preflop),
+                };
+
+            TestParseActions("AddingMidHand", expectedActions);
+        }
+
         protected override List<HandAction> ExpectedHandActionsBasicHand
         {
             get
