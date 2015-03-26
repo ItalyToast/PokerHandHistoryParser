@@ -585,6 +585,10 @@ namespace HandHistories.Parser.Parsers.FastParser.FullTiltPoker
 
                     //goSuckout has 5 seconds left to act
                     case 't':
+                        //KOCTAH sits down
+                    case 'n':
+                        //thaeee stands up
+                    case 'p':
                         continue;
 
                     default:
@@ -631,6 +635,11 @@ namespace HandHistories.Parser.Parsers.FastParser.FullTiltPoker
 
                     //iason07 antes $0.30
                     case 's':
+                        if (line[idIndex - 2] == 'd')
+                        {
+                            continue;
+                        }
+
                         actionType = HandActionType.ANTE;
                         playerName = line.Remove(idIndex - 6);
                         break;

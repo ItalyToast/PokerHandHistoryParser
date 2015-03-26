@@ -193,6 +193,9 @@
     </Content>
     <Compile Include="Utils\IO\IFileReader.cs" />
     <Compile Include="Utils\IO\WindowsFileReaderImpl.cs" />
+    <Content Include="SampleHandHistories\FullTilt\CashGame\BlindTests\Adding.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="SampleHandHistories\FullTilt\CashGame\GameTypeTests\FixedLimitHoldem.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
