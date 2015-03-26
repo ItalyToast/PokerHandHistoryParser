@@ -352,6 +352,8 @@ namespace HandHistories.Parser.Parsers.FastParser.FullTiltPoker
                     case ']':
                     //thaeee stands up
                     case 'p':
+                        //kikepokero has returned
+                    case 'd':
                         continue;
 
                     default:
