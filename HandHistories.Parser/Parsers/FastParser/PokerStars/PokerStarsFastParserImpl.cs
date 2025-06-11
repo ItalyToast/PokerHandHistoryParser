@@ -8,6 +8,7 @@ using HandHistories.Parser.Parsers.Exceptions;
 using HandHistories.Parser.Parsers.FastParser.Base;
 using HandHistories.Parser.Utils.Extensions;
 using HandHistories.Parser.Utils.FastParsing;
+using HandHistories.Parser.Utils.Time;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -33,6 +34,9 @@ namespace HandHistories.Parser.Parsers.FastParser.PokerStars
         private readonly Regex _handSplitRegex;
 
         private const int GameIdStartIndex = 17;
+        private const int MONTH_START_INDEX = 5;
+        private const int DAY_START_INDEX = 8;
+        private const int HOUR_START_INDEX = 11;
 
         // So the same parser can be used for It and Fr variations
         public PokerStarsFastParserImpl(SiteName siteName = SiteName.PokerStars)
@@ -99,44 +103,67 @@ namespace HandHistories.Parser.Parsers.FastParser.PokerStars
             return FastInt.Parse(line, startIndex);
         }
 
+        private DateTime ParseDateTimeFromString(string dateString)
+        {
+            int year = FastInt.Parse(dateString);
+            int month = FastInt.Parse(dateString, MONTH_START_INDEX);
+            int day = FastInt.Parse(dateString, DAY_START_INDEX);
+            int hour = FastInt.Parse(dateString, HOUR_START_INDEX);
+            // DateString is one of:
+            // 2012/04/07 2:58:27
+            // 2012/04/07 18:58:27 
+            // This requires a different logic to parse the minute and second
+            int minuteStartIndex = dateString.IndexOf(':', 12) + 1;
+            int minute = FastInt.Parse(dateString, minuteStartIndex);
+            int second = FastInt.Parse(dateString, minuteStartIndex + 3);
+            
+            return new DateTime(year, month, day, hour, minute, second);
+        }
+
         protected override DateTime ParseDateUtc(string[] handLines)
         {
             // Expect the first line to look like this: 
             // PokerStars Hand #78453197174:  Hold'em No Limit ($0.08/$0.16 USD) - 2012/04/06 20:56:40 ET
-
             // or
-
             // PokerStars Game #61777648755:  Hold'em No Limit ($0.50/$1.00 USD) - 2011/05/06 20:51:38 PT [2011/05/06 23:51:38 ET]
+            // or
+            // PPPoker Hand #916757930000164:  5 Card Omaha Pot Limit ($0.50/$1.00 USD) - 2025/05/06 15:42:26 UTC
 
             string line = handLines[0];
-            line = line.TrimEnd(']');
 
-            int startIndex = line.Length - 22;
-            string dateString = line.Substring(startIndex, 20);
+            // Extract timezone from the line
+            TimeZoneInfo timeZone = TimeZoneUtil.ExtractTimeZoneFromString(line, PokerStarsTimeZone);
 
-            dateString = dateString.Trim(' ', '[');
-
-            // DateString is one of:
-            // 2012/04/07 2:58:27
-            // 2012/04/07 18:58:27
-
-            int year = FastInt.Parse(dateString);
-            int month = FastInt.Parse(dateString, 5);
-            int day = FastInt.Parse(dateString, 8);
-
-            int hour = FastInt.Parse(dateString, 11);
-
-            int minuteStartIndex = dateString.IndexOf(':', 12) + 1;
-
-            int minute = FastInt.Parse(dateString, minuteStartIndex);
-
-            int second = FastInt.Parse(dateString, minuteStartIndex + 3);
-
-            DateTime dateTime = new DateTime(year, month, day, hour, minute, second); //DateTime.ParseExact(dateString, "yyyy/MM/dd H:mm:ss", provider);//new DateTime(year, month, day, hour, minute, second);
-
-            DateTime converted = TimeZoneInfo.ConvertTimeToUtc(dateTime, PokerStarsTimeZone);
-
+            // Parse the timestamp - look for the last timestamp in the line
+            DateTime dateTime = ParseTimestampFromLine(line);
+            
+            // Convert to UTC using the extracted timezone
+            DateTime converted = TimeZoneInfo.ConvertTimeToUtc(dateTime, timeZone);
             return DateTime.SpecifyKind(converted, DateTimeKind.Utc);
+        }
+
+        private DateTime ParseTimestampFromLine(string line)
+        {
+            string dateString;
+            
+            if (line.Contains("["))
+            {
+                // PokerStars Game #61777648755:  Hold'em No Limit ($0.50/$1.00 USD) - 2011/05/06 20:51:38 PT [2011/05/06 23:51:38 ET]
+                int bracketStart = line.LastIndexOf('[');
+                dateString = line.Substring(bracketStart + 1);
+            }
+            else
+            {
+                // PokerStars Hand #78453197174:  Hold'em No Limit ($0.08/$0.16 USD) - 2012/04/06 20:56:40 ET
+                int separatorIndex = line.LastIndexOf(" - ");
+                if (separatorIndex == -1)
+                {
+                    throw new ArgumentException("Could not find timestamp separator in line: " + line);
+                }
+                dateString = line.Remove(0, separatorIndex + 3);
+            }
+            
+            return ParseDateTimeFromString(dateString);
         }
 
         protected override void ParseExtraHandInformation(string[] handLines, HandHistorySummary handHistorySummary)

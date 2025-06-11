@@ -279,5 +279,29 @@ namespace HandHistories.Parser.UnitTests.Parsers.FastParserTests.PokerStars
 
             Assert.IsFalse(hand.Cancelled);
         }
+
+        [Test]
+        public void UtcTimestampFormat()
+        {
+            HandHistorySummary expectedSummary = new HandHistorySummary()
+            {
+                GameDescription = new GameDescriptor()
+                {
+                    PokerFormat = PokerFormat.CashGame,
+                    GameType = GameType.FiveCardPotLimitOmaha,
+                    Limit = Limit.FromSmallBlindBigBlind(0.30m, 0.60m, Currency.USD),
+                    SeatType = SeatType.FromMaxPlayers(6),
+                    Site = SiteName.PokerStars,
+                    TableType = TableType.FromTableTypeDescriptions(TableTypeDescription.Regular)
+                },
+                DateOfHandUtc = new DateTime(2025, 2, 23, 23, 50, 4, DateTimeKind.Utc),
+                DealerButtonPosition = 2,
+                HandId = HandID.From(886664460000891),
+                NumPlayersSeated = 4,
+                TableName = "ClubId:951145,Table:PPP_88666446"
+            };
+
+            TestFullHandHistorySummary(expectedSummary, "UtcTimestampFormat");
+        }
     }
 }

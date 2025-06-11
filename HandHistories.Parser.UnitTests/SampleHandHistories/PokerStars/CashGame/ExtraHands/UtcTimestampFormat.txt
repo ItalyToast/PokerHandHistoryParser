@@ -1,0 +1,32 @@
+PPPoker Hand #886664460000891:  5 Card Omaha Pot Limit ($0.30/$0.60 USD) - 2025/02/23 23:50:04 UTC
+Table 'ClubId:951145,Table:PPP_88666446' 6-max Seat #2 is the button
+Seat 2: 1847237 ($157.41 in chips)
+Seat 3: 10409818 ($159.68 in chips)
+Seat 4: 8163010 ($24.00 in chips)
+Seat 5: 529317 ($107.64 in chips)
+10409818: posts small blind $0.30
+8163010: posts big blind $0.60
+*** HOLE CARDS ***
+529317: folds
+1847237: folds
+10409818: raises $1.20 to $1.80
+8163010: calls $1.20
+*** FLOP *** [5d Jd 5h] {Rake: $0}
+10409818: checks
+8163010: checks
+*** TURN *** [5d Jd 5h] [As] {Rake: $0}
+10409818: checks
+8163010: checks
+*** RIVER *** [5d Jd 5h As] [2h] {Rake: $0}
+10409818: checks
+8163010: checks
+*** SHOW DOWN ***
+10409818 collected $3.30 from pot
+*** SUMMARY ***
+Total pot $3.60 | Rake $0.36
+Board [5d Jd 5h As 2h]
+Seat 2: 1847237 folded on the Flop
+Seat 3: 10409818 showed [6d 7c Ac Qs Kd]
+Seat 4: 8163010 folded on the Flop
+Seat 5: 529317 folded on the Flop
+Hand ended at 2025/02/23 23:50:04 
