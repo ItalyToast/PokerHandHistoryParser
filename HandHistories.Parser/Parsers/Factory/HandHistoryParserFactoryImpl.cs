@@ -41,6 +41,7 @@ namespace HandHistories.Parser.Parsers.Factory
                 case SiteName.PokerStarsFr:
                 case SiteName.PokerStarsIt:
                 case SiteName.PokerStarsEs:
+                case SiteName.PPPoker:
                     return new PokerStarsFastParserImpl(siteName);
                 case SiteName.Merge:
                     return new MergeFastParserImpl();

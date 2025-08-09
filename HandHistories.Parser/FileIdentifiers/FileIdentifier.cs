@@ -29,6 +29,7 @@ namespace HandHistories.Parser.FileIdentifiers
             ids.Add(new IGT.IGTFileIdentifier());
             ids.Add(new AsianPokerClubs.AsianPokerClubsFileIdentifier());
             ids.Add(new GGPoker.GGPokerFileIdentifier());
+            ids.Add(new PPPoker.PPPokerFileIdentifier());
 
             return ids;
         }

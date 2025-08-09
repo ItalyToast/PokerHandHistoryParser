@@ -265,5 +265,85 @@ namespace HandHistories.Parser.UnitTests.Parsers.FastParserTests.PokerStars
 
             Assert.AreEqual(new HandAction("RECHUK", HandActionType.SHOW, 0m, Street.Showdown), handAction);
         }
+
+        [Test]
+        public void PPPokerHand_ParsesCorrectly()
+        {
+            // Test that PPPoker hands are parsed correctly using the PokerStars parser
+            var parser = new PokerStarsFastParserImpl(SiteName.PPPoker);
+            
+            // Read the hand history from file
+            string pppokerHand = SampleHandHistoryRepository.GetHandExample(PokerFormat.CashGame, Site, "PPPoker", "PPPokerHand");
+
+            var hands = parser.SplitUpMultipleHands(pppokerHand).ToList();
+            Assert.AreEqual(1, hands.Count, "Should split into exactly one hand");
+            
+            // Test that the hand can be parsed
+            var handHistory = parser.ParseFullHandHistory(pppokerHand);
+            
+            // Verify key properties
+            Assert.AreEqual(934479950000496, handHistory.HandId[0], "Hand ID should be parsed correctly");
+            Assert.AreEqual(GameType.FiveCardPotLimitOmaha, handHistory.GameDescription.GameType, "Game type should be 5 Card Omaha Pot Limit");
+            Assert.AreEqual(PokerFormat.CashGame, handHistory.GameDescription.PokerFormat, "Should be cash game format");
+            Assert.AreEqual(6, handHistory.Players.Count, "Should have 6 players");
+            Assert.AreEqual(93.99m, handHistory.TotalPot, "Total pot should be $93.99");
+            Assert.AreEqual(5.10m, handHistory.Rake, "Rake should be $5.10");
+            
+            // Test that the winner is correctly identified
+            var winners = handHistory.Winners;
+            Assert.AreEqual(1, winners.Count, "Should have one winner");
+            Assert.AreEqual("9673947", winners[0].PlayerName, "Winner should be 9673947");
+            Assert.AreEqual(88.89m, winners[0].Amount, "Winner amount should be $88.89");
+        }
+
+        [Test]
+        public void PPPokerHandSplitRegex_Works()
+        {
+            var parser = new PokerStarsFastParserImpl(SiteName.PPPoker);
+            
+            string multipleHands = @"PPPoker Hand #934479950000496:  5 Card Omaha Pot Limit ($0.30/$0.60 USD) - 2025/06/21 17:47:21 UTC
+Table 'ClubId:2990864,Table:PPP_93447995' 6-max Seat #2 is the button
+*** HOLE CARDS ***
+*** SUMMARY ***
+Total pot $93.99 | Rake $5.10
+
+PPPoker Hand #934479950000497:  Hold'em No Limit ($0.50/$1.00 USD) - 2025/06/21 17:48:45 UTC
+Table 'ClubId:2990864,Table:PPP_93447995' 6-max Seat #3 is the button
+*** HOLE CARDS ***
+*** SUMMARY ***
+Total pot $50.00 | Rake $2.50";
+
+            var hands = parser.SplitUpMultipleHands(multipleHands).ToList();
+            Assert.AreEqual(2, hands.Count, "Should split into exactly two hands");
+            
+            Assert.IsTrue(hands[0].StartsWith("PPPoker Hand #934479950000496"), "First hand should start with correct PPPoker hand ID");
+            
+            Assert.IsTrue(hands[1].StartsWith("PPPoker Hand #934479950000497"), "Second hand should start with correct PPPoker hand ID");
+        }
+
+        [Test]
+        public void PPPokerShowdownHand_ParsesHoleCardsFromSummary()
+        {
+            var parser = new PokerStarsFastParserImpl(SiteName.PPPoker);
+            
+            string pppokerHand = SampleHandHistoryRepository.GetHandExample(PokerFormat.CashGame, Site, "PPPoker", "ShowdownHand");
+
+            var handHistory = parser.ParseFullHandHistory(pppokerHand);
+            
+            // Verify that hole cards are parsed from the summary section
+            Assert.IsTrue(handHistory.Players["11641651"].hasHoleCards, "Player 11641651 should have hole cards");
+            Assert.IsTrue(handHistory.Players["10284118"].hasHoleCards, "Player 10284118 should have hole cards");
+            
+            // Verify the specific hole cards
+            var player1Cards = handHistory.Players["11641651"].HoleCards;
+            var player2Cards = handHistory.Players["10284118"].HoleCards;
+            
+            Assert.AreEqual("8dThTcJhKh", player1Cards.ToString(), "Player 11641651 should have correct hole cards");
+            Assert.AreEqual("8sKcAsAh5c", player2Cards.ToString(), "Player 10284118 should have correct hole cards");
+            
+            // Verify that players who didn't show cards don't have hole cards
+            Assert.IsFalse(handHistory.Players["11856112"].hasHoleCards, "Player 11856112 should not have hole cards");
+            Assert.IsFalse(handHistory.Players["11270058"].hasHoleCards, "Player 11270058 should not have hole cards");
+        }
     }
 }

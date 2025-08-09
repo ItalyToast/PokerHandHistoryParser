@@ -86,5 +86,27 @@ namespace HandHistories.Parser.Utils.Time
         {
             return TimeZoneInfo.FindSystemTimeZoneById(TimezoneAbbreviations[timeZoneAbbr]);
         }
+
+        /// <summary>
+        /// Extracts timezone abbreviation from a string and returns the corresponding TimeZoneInfo
+        /// </summary>
+        /// <param name="timezoneAbbr">The timezone abbreviation</param>
+        /// <param name="defaultTimeZone">Default timezone to return if no abbreviation is found</param>
+        /// <returns>TimeZoneInfo for the extracted abbreviation, or the default timezone</returns>
+        public static TimeZoneInfo ExtractTimeZoneFromString(string timezoneAbbr, TimeZoneInfo defaultTimeZone = null)
+        {
+            if (string.IsNullOrWhiteSpace(timezoneAbbr))
+                return defaultTimeZone ?? TimeZoneInfo.Utc;
+            
+            switch (timezoneAbbr)
+            {
+                case "UTC":
+                    return TimeZoneInfo.Utc;
+                case "ET":
+                    return TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                default:
+                    return defaultTimeZone ?? TimeZoneInfo.Utc;
+            }
+        }
     }
 }

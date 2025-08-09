@@ -273,7 +273,7 @@ namespace HandHistories.Parser.Parsers.FastParser.Base
             }
         }
 
-        static void AdjustTotalPot(HandHistory handHistory)
+        private static void AdjustTotalPot(HandHistory handHistory)
         {
             var action = handHistory.HandActions.FirstOrDefault(p => p.HandActionType == HandActionType.UNCALLED_BET);
             if (action != null)

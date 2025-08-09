@@ -8,6 +8,7 @@ using HandHistories.Parser.Parsers.Exceptions;
 using HandHistories.Parser.Parsers.FastParser.Base;
 using HandHistories.Parser.Utils.Extensions;
 using HandHistories.Parser.Utils.FastParsing;
+using HandHistories.Parser.Utils.Time;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -32,9 +33,12 @@ namespace HandHistories.Parser.Parsers.FastParser.PokerStars
 
         private readonly Regex _handSplitRegex;
 
-        const int GameIdStartIndex = 17;
+        private const int GameIdStartIndex = 17;
+        private const int MONTH_START_INDEX = 5;
+        private const int DAY_START_INDEX = 8;
+        private const int HOUR_START_INDEX = 11;
 
-        // So the same parser can be used for It and Fr variations
+        // So the same parser can be used for It and Fr variations. Also for PPPoker which uses the pokerstars format.
         public PokerStarsFastParserImpl(SiteName siteName = SiteName.PokerStars)
         {
             _siteName = siteName;
@@ -45,7 +49,7 @@ namespace HandHistories.Parser.Parsers.FastParser.PokerStars
                 CurrencyGroupSeparator = ",",
                 CurrencySymbol = "$"
             };
-            _handSplitRegex = new Regex("(PokerStars Game #)|(PokerStars Hand #)|(PokerStars Zoom Hand #)", RegexOptions.Compiled);
+            _handSplitRegex = new Regex("(PokerStars Game #)|(PokerStars Hand #)|(PokerStars Zoom Hand #)|(PPPoker Hand #)", RegexOptions.Compiled);
         }
 
         // So the same parser can be used for It and Fr variations
@@ -99,44 +103,85 @@ namespace HandHistories.Parser.Parsers.FastParser.PokerStars
             return FastInt.Parse(line, startIndex);
         }
 
+        private DateTime ParseDateTimeFromString(string dateString)
+        {
+            int year = FastInt.Parse(dateString);
+            int month = FastInt.Parse(dateString, MONTH_START_INDEX);
+            int day = FastInt.Parse(dateString, DAY_START_INDEX);
+            int hour = FastInt.Parse(dateString, HOUR_START_INDEX);
+            // DateString is one of:
+            // 2012/04/07 2:58:27
+            // 2012/04/07 18:58:27 
+            // This requires a different logic to parse the minute and second
+            int minuteStartIndex = dateString.IndexOf(':', 12) + 1;
+            int minute = FastInt.Parse(dateString, minuteStartIndex);
+            int second = FastInt.Parse(dateString, minuteStartIndex + 3);
+            
+            return new DateTime(year, month, day, hour, minute, second);
+        }
+
         protected override DateTime ParseDateUtc(string[] handLines)
         {
             // Expect the first line to look like this: 
             // PokerStars Hand #78453197174:  Hold'em No Limit ($0.08/$0.16 USD) - 2012/04/06 20:56:40 ET
-
             // or
-
             // PokerStars Game #61777648755:  Hold'em No Limit ($0.50/$1.00 USD) - 2011/05/06 20:51:38 PT [2011/05/06 23:51:38 ET]
+            // or
+            // PPPoker Hand #916757930000164:  5 Card Omaha Pot Limit ($0.50/$1.00 USD) - 2025/05/06 15:42:26 UTC
 
             string line = handLines[0];
-            line = line.TrimEnd(']');
 
-            int startIndex = line.Length - 22;
-            string dateString = line.Substring(startIndex, 20);
+            // Extract timezone from the line
+            TimeZoneInfo timeZone = ExtractPokerStarsTimeZoneFromString(line);
 
-            dateString = dateString.Trim(' ', '[');
-
-            // DateString is one of:
-            // 2012/04/07 2:58:27
-            // 2012/04/07 18:58:27
-
-            int year = FastInt.Parse(dateString);
-            int month = FastInt.Parse(dateString, 5);
-            int day = FastInt.Parse(dateString, 8);
-
-            int hour = FastInt.Parse(dateString, 11);
-
-            int minuteStartIndex = dateString.IndexOf(':', 12) + 1;
-
-            int minute = FastInt.Parse(dateString, minuteStartIndex);
-
-            int second = FastInt.Parse(dateString, minuteStartIndex + 3);
-
-            DateTime dateTime = new DateTime(year, month, day, hour, minute, second); //DateTime.ParseExact(dateString, "yyyy/MM/dd H:mm:ss", provider);//new DateTime(year, month, day, hour, minute, second);
-
-            DateTime converted = TimeZoneInfo.ConvertTimeToUtc(dateTime, PokerStarsTimeZone);
-
+            // Parse the timestamp - look for the last timestamp in the line
+            DateTime dateTime = ParseTimestampFromLine(line);
+            
+            // Convert to UTC using the extracted timezone
+            DateTime converted = TimeZoneInfo.ConvertTimeToUtc(dateTime, timeZone);
             return DateTime.SpecifyKind(converted, DateTimeKind.Utc);
+        }
+
+        private DateTime ParseTimestampFromLine(string line)
+        {
+            string dateString;
+            
+            if (line.Contains("["))
+            {
+                // PokerStars Game #61777648755:  Hold'em No Limit ($0.50/$1.00 USD) - 2011/05/06 20:51:38 PT [2011/05/06 23:51:38 ET]
+                int bracketStart = line.LastIndexOf('[');
+                dateString = line.Substring(bracketStart + 1);
+            }
+            else
+            {
+                // PokerStars Hand #78453197174:  Hold'em No Limit ($0.08/$0.16 USD) - 2012/04/06 20:56:40 ET
+                int separatorIndex = line.LastIndexOf(" - ");
+                if (separatorIndex == -1)
+                {
+                    throw new ArgumentException("Could not find timestamp separator in line: " + line);
+                }
+                dateString = line.Remove(0, separatorIndex + 3);
+            }
+            
+            return ParseDateTimeFromString(dateString);
+        }
+
+        private TimeZoneInfo ExtractPokerStarsTimeZoneFromString(string line)
+        {
+            if (string.IsNullOrWhiteSpace(line))
+                return PokerStarsTimeZone;
+
+            // Trim any trailing brackets
+            string trimmedLine = line.TrimEnd(']');
+            
+            // Find the last space and check what comes after it
+            int lastSpaceIndex = trimmedLine.LastIndexOf(' ');
+            if (lastSpaceIndex == -1)
+                return PokerStarsTimeZone;
+            
+            string timezoneAbbr = trimmedLine.Substring(lastSpaceIndex + 1);
+            
+            return TimeZoneUtil.ExtractTimeZoneFromString(timezoneAbbr, PokerStarsTimeZone);
         }
 
         protected override void ParseExtraHandInformation(string[] handLines, HandHistorySummary handHistorySummary)
@@ -832,8 +877,10 @@ namespace HandHistories.Parser.Parsers.FastParser.PokerStars
                 //*** SHOW DOWN ***
                 case '*':
                 //*** FLOP *** [Qs Js 3h]
+                //*** FLOP *** [6c 9d 5c] {Rake: $0}
                 //Dealt to PS_Hero [4s 7h]
                 case ']':
+                case '}':
                     char firstChar = line[0];
 
                     if (firstChar == '*')
@@ -1228,7 +1275,7 @@ namespace HandHistories.Parser.Parsers.FastParser.PokerStars
                     openParenIndex = line.LastIndexOf('(');
                 }
                 
-                int spaceAfterOpenParen = line.IndexOf(' ', openParenIndex);                
+                int spaceAfterOpenParen = line.IndexOf(' ', openParenIndex);       
 
                 string playerName = line.Substring(colonIndex + 2, (openParenIndex - 1) - (colonIndex + 2));
 
@@ -1390,7 +1437,8 @@ namespace HandHistories.Parser.Parsers.FastParser.PokerStars
                 }
             }
 
-            //Look for mucks in summary
+            //Look for mucks in summary, and showdowns for PPPoker
+            var isPPPokerHand = handLines[0].StartsWithFast("PPPoker Hand #");
             for (int i = summaryIndex; i < handLines.Length; i++)
             {
                 string line = handLines[i];
@@ -1409,6 +1457,19 @@ namespace HandHistories.Parser.Parsers.FastParser.PokerStars
                     string cards = line.Substring(cardsStartIndex, cardsEndIndex - cardsStartIndex);
 
                     playerList[playerName].HoleCards = HoleCards.FromCards(cards);
+                }
+                // Handle PPPoker format: "Seat 1: 11234982 showed [Qc 7c Tc Jh 6s]"
+                else if (isPPPokerHand && line.StartsWithFast("Seat ") && line.Contains("showed ["))
+                {
+                    int nameStart = line.IndexOfFast(": ") + 2;
+                    int spaceAfterName = line.IndexOfFast(" ", nameStart);
+                    string name = line.Substring(nameStart, spaceAfterName - nameStart);
+
+                    int cardStart = line.IndexOfFast("showed [") + 8;
+                    int cardEnd = line.IndexOf(']', cardStart);
+                    string cards = line.Substring(cardStart, cardEnd - cardStart);
+
+                    playerList[name].HoleCards = HoleCards.FromCards(cards);
                 }
             }
 

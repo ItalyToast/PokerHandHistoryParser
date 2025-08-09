@@ -1,0 +1,51 @@
+PPPoker Hand #934479950000496:  5 Card Omaha Pot Limit ($0.30/$0.60 USD) - 2025/06/21 17:47:21 UTC
+Table 'ClubId:2990864,Table:PPP_93447995' 6-max Seat #2 is the button
+Seat 1: 9535605 ($110.65 in chips)
+Seat 2: 9673947 ($29.93 in chips)
+Seat 3: 11887647 ($29.10 in chips)
+Seat 4: 10284118 ($81.34 in chips)
+Seat 5: 11135526 ($95.90 in chips)
+Seat 6: 10919833 ($52.28 in chips)
+11887647: posts small blind $0.30
+10284118: posts big blind $0.60
+*** HOLE CARDS ***
+Dealt to 11887647 [Qh Qs Js 8s 8c]
+11135526: raises $1.50 to $2.10
+10919833: folds
+9535605: calls $2.10
+9673947: calls $2.10
+11887647: calls $1.80
+10284118: calls $1.50
+*** FLOP *** [2d Td Ks] {Rake: $0}
+11887647: checks
+10284118: checks
+11135526: checks
+9535605: checks
+9673947: checks
+*** TURN *** [2d Td Ks] [4h] {Rake: $0}
+11887647: checks
+10284118: bets $7
+11135526: folds
+9535605: calls $7
+9673947: raises $20.83 to $27.83 and is all-in
+11887647: folds
+10284118: calls $20.83
+9535605: calls $20.83
+*** RIVER *** [2d Td Ks 4h] [Kc] {Rake: $0}
+10284118: checks
+9535605: checks
+*** SHOW DOWN ***
+10284118: mucks hand
+9535605: mucks hand
+9673947: mucks hand
+9673947 collected $88.89 from pot
+*** SUMMARY ***
+Total pot $93.99 | Rake $5.10
+Board [2d Td Ks 4h Kc]
+Seat 1: 9535605 showed [As Ad 5d 6d 2c]
+Seat 2: 9673947 (button) showed [4s Jh Ac Kh 6h]
+Seat 3: 11887647 (small blind) folded on the Turn
+Seat 4: 10284118 (big blind) showed [8d 2h 7s 5h Kd]
+Seat 5: 11135526 folded on the Turn
+Seat 6: 10919833 folded before Flop (didn't bet)
+Hand ended at 2025/06/21 17:48:45 
