@@ -44,6 +44,16 @@ namespace HandHistories.Objects.Cards
             return new HoleCards(playerName, card1, card2, card3, card4, card5);
         }
 
+        public static HoleCards ForOmaha6(Card card1, Card card2, Card card3, Card card4, Card card5, Card card6)
+        {
+            return new HoleCards(string.Empty, card1, card2, card3, card4, card5, card6);
+        }
+
+        public static HoleCards ForOmaha6(string playerName, Card card1, Card card2, Card card3, Card card4, Card card5, Card card6)
+        {
+            return new HoleCards(playerName, card1, card2, card3, card4, card5, card6);
+        }
+
         public static HoleCards NoHolecards()
         {
             return new HoleCards(string.Empty);
@@ -74,11 +84,16 @@ namespace HandHistories.Objects.Cards
             {
                 return NoHolecards();
             }
-            if (cards.Length > 5)
+            if (cards.Length > 6)
             {
-                throw new ArgumentException("Hole cards cant contain more than 5 cards.");
+                throw new ArgumentException("Hole cards cant contain more than 6 cards.");
             }
             return new HoleCards(playerName, cards);
-        }       
+        }
+
+        protected override int GetMaxCardCount()
+        {
+            return 6; // Allow up to 6 cards for Six Card Omaha
+        }
     }
 }
