@@ -387,6 +387,8 @@ namespace HandHistories.Parser.Parsers.FastParser.PokerStars
                     return GameType.PotLimitOmahaHiLo;
                 case 22:
                     return GameType.FiveCardPotLimitOmaha;
+                case 23:
+                    return GameType.SixCardPotLimitOmaha;
                 case 20:
                     return GameType.NoLimitOmahaHiLo;
                 case 11:

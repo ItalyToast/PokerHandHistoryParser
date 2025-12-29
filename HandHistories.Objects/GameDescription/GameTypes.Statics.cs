@@ -87,6 +87,30 @@ namespace HandHistories.Objects.GameDescription
             }
         }
 
+        public static GameType SixCardFixedLimitOmaha
+        {
+            get
+            {
+                return new GameType(GameLimitEnum.FixedLimit, GameEnum.SixCardOmaha);
+            }
+        }
+
+        public static GameType SixCardNoLimitOmaha
+        {
+            get
+            {
+                return new GameType(GameLimitEnum.NoLimit, GameEnum.SixCardOmaha);
+            }
+        }
+
+        public static GameType SixCardPotLimitOmaha
+        {
+            get
+            {
+                return new GameType(GameLimitEnum.PotLimit, GameEnum.SixCardOmaha);
+            }
+        }
+
         public static GameType FixedLimitOmahaHiLo
         {
             get

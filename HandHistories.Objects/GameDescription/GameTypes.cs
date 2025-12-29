@@ -25,6 +25,8 @@ namespace HandHistories.Objects.GameDescription
         [EnumMember]
         FiveCardOmaha,
         [EnumMember]
+        SixCardOmaha,
+        [EnumMember]
         OmahaHiLo,
         [EnumMember]
         FiveCardOmahaHiLo,

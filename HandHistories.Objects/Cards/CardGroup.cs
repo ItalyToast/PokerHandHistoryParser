@@ -51,13 +51,15 @@ namespace HandHistories.Objects.Cards
                 throw new ArgumentException("Card " + card.ToString() + " already exists.");
             }
 
-            if (Cards.Count >= 5)
+            if (Cards.Count >= GetMaxCardCount())
             {
-                throw new ArgumentException("Board can't consist of more than 5 cards.");
+                throw new ArgumentException("Cannot add more than " + GetMaxCardCount() + " cards.");
             }
 
             Cards.Add(card);
         }
+
+        protected abstract int GetMaxCardCount();
 
         public void AddCards(IEnumerable<Card> cards)
         {
