@@ -40,6 +40,7 @@ namespace HandHistories.Objects.GameDescription
         Upoker = 35,
         GGPoker = 36,
         PPPoker = 37,
+        ClubGG = 38,
         All = 63 // note: can't go higher than 63 due to bit value optimizations
     }
 }

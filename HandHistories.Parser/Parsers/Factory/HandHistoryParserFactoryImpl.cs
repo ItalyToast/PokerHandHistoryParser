@@ -80,10 +80,17 @@ namespace HandHistories.Parser.Parsers.Factory
                 case SiteName.IGT:
                     return new IGTJSONParserImpl();
                 case SiteName.AsianPokerClubs:
-                    var splitRegex = new Regex("PokerMaster Hand #", RegexOptions.Compiled);
-                    return new PokerStarsFastParserImpl(SiteName.AsianPokerClubs, splitRegex);
+                    {
+                        var splitRegex = new Regex("PokerMaster Hand #", RegexOptions.Compiled);
+                        return new PokerStarsFastParserImpl(SiteName.AsianPokerClubs, splitRegex);
+                    }
                 case SiteName.GGPoker:
                     return new GGPokerFastParserImpl();
+                case SiteName.ClubGG:
+                    {
+                        var splitRegex = new Regex("ClubGG Hand #", RegexOptions.Compiled);
+                        return new PokerStarsFastParserImpl(SiteName.ClubGG, splitRegex);
+                    }
                 default:
                     throw new NotImplementedException("GetHandHistorySummaryParser: No full regex parser for " + siteName);
             }
@@ -141,10 +148,17 @@ namespace HandHistories.Parser.Parsers.Factory
                 case SiteName.IGT:
                     return new IGTJSONParserImpl();
                 case SiteName.AsianPokerClubs:
-                    var splitRegex = new Regex("PokerMaster Hand #", RegexOptions.Compiled);
-                    return new PokerStarsFastParserImpl(SiteName.AsianPokerClubs, splitRegex);
+                    {
+                        var splitRegex = new Regex("PokerMaster Hand #", RegexOptions.Compiled);
+                        return new PokerStarsFastParserImpl(SiteName.AsianPokerClubs, splitRegex);
+                    }
                 case SiteName.GGPoker:
                     return new GGPokerFastParserImpl();
+                case SiteName.ClubGG:
+                    {
+                        var splitRegex = new Regex("ClubGG Hand #", RegexOptions.Compiled);
+                        return new PokerStarsFastParserImpl(SiteName.ClubGG, splitRegex);
+                    }
                 default:
                     throw new NotImplementedException("GetHandHistorySummaryParser: No summary regex parser for " + siteName);
             }
