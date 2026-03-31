@@ -58,6 +58,10 @@ namespace HandHistories.Objects.GameDescription
                 case "pot limit five card omaha":
                 case "5 card omaha pot limit":
                     return GameType.FiveCardPotLimitOmaha;
+                case "omaha6 pot limit":
+                case "pot limit six card omaha":
+                case "6 card omaha pot limit":
+                    return GameType.SixCardPotLimitOmaha;
                 default:
                     string match = Enum.GetNames(typeof(GameType)).FirstOrDefault(g => g.ToLower().Equals(gameString.ToLower()));
                     return match == null ? GameType.Unknown : (GameType)Enum.Parse(typeof(GameType), match,true);
