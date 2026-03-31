@@ -29,6 +29,8 @@ namespace HandHistories.Objects.GameDescription
         [EnumMember]
         FiveCardOmahaHiLo,
         [EnumMember]
+        SixCardOmaha,
+        [EnumMember]
         Any = 255,
     }
 

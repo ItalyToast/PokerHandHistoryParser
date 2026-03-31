@@ -134,5 +134,13 @@ namespace HandHistories.Objects.GameDescription
                 return new GameType(GameLimitEnum.PotLimit, GameEnum.FiveCardOmahaHiLo);
             }
         }
+
+        public static GameType SixCardPotLimitOmaha
+        {
+            get
+            {
+                return new GameType(GameLimitEnum.PotLimit, GameEnum.SixCardOmaha);
+            }
+        }
     }
 }
