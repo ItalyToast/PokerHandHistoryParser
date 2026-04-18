@@ -28,6 +28,14 @@ namespace HandHistories.Objects.Players
         [DataMember]
         public bool IsSittingOut { get; set; }
 
+        /// <summary>
+        /// What the rest of the table saw this player do with their hole cards.
+        /// Independent of <see cref="HoleCards"/> (which answers whether the parser
+        /// has the cards) and of whether this player is the hero.
+        /// </summary>
+        [DataMember]
+        public RevealAction RevealAction { get; set; }
+
         public Player(string playerName, 
                       decimal startingStack,
                       int seatNumber)

@@ -97,7 +97,10 @@ namespace HandHistories.Parser.UnitTests.Parsers.Base
 
         private string GetSampleHandHistoryFolder(PokerFormat pokerFormat, SiteName siteName)
         {
-            return string.Format(@"SampleHandHistories\{0}\{1}\", siteName, pokerFormat);
+            // Use Path.Combine for cross-platform separators; the previous hard-coded
+            // "\" broke every file lookup on macOS/Linux, causing NullReferenceException
+            // in callers that Split the returned text.
+            return System.IO.Path.Combine("SampleHandHistories", siteName.ToString(), pokerFormat.ToString());
         }
     }
 }
