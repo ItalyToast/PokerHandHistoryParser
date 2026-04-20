@@ -8,7 +8,7 @@ namespace HandHistories.Parser.Analyzers
     /// <summary>
     /// Post-parse pass that populates <see cref="HandHistory.WentToShowdown"/> and
     /// each <see cref="Objects.Players.Player.RevealAction"/> from the already-parsed
-    /// action list. Runs once per hand; derivation is a single linear walk.
+    /// action list.
     /// </summary>
     public static class ShowdownAnalyzer
     {
