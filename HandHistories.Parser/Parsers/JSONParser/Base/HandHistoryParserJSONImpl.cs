@@ -21,7 +21,7 @@ namespace HandHistories.Parser.Parsers.JSONParser.Base
 {
     public abstract class HandHistoryParserJSONImpl : IHandHistoryParser
     {
-        private static readonly Regex HandSplitRegex = new Regex("\r\n\r\n", RegexOptions.Compiled);
+        private static readonly Regex HandSplitRegex = new Regex("\r?\n\r?\n", RegexOptions.Compiled);
 
         public abstract SiteName SiteName { get; }
 
