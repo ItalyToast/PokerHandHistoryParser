@@ -3,6 +3,7 @@ using HandHistories.Objects.Cards;
 using HandHistories.Objects.GameDescription;
 using HandHistories.Objects.Hand;
 using HandHistories.Objects.Players;
+using HandHistories.Parser.Analyzers;
 using HandHistories.Parser.Parsers.Base;
 using HandHistories.Parser.Parsers.Exceptions;
 using HandHistories.Parser.Utils.AllInAction;
@@ -256,6 +257,8 @@ namespace HandHistories.Parser.Parsers.FastParser.Base
                 }
 
                 FinalizeHandHistory(handHistory);
+
+                ShowdownAnalyzer.Populate(handHistory);
 
                 SetActionNumbers(handHistory);
 

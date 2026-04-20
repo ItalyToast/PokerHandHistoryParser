@@ -35,7 +35,13 @@ namespace HandHistories.Objects.Hand
 
         public Player Hero { get; set; }
 
-        public RunItTwice RunItTwiceData { get; set;  } 
+        /// <summary>
+        /// True if the hand reached the showdown phase with at least two players
+        /// still live (i.e. fewer than <c>Players.Count - 1</c> players folded).
+        /// </summary>
+        public bool WentToShowdown { get; set; }
+
+        public RunItTwice RunItTwiceData { get; set;  }
         
         public RunItTwice[] RunItMultipleTimes { get; set;  }
 

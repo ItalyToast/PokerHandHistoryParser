@@ -1,7 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <!--
+      Test projects target net8.0 (while production libraries stay on netstandard2.0/2.1
+      so downstream consumers are unaffected). .NET Core 3.1 is EOL (Dec 2022) and has no
+      native arm64 build, so the previous netcoreapp3.1 target couldn't run on Apple Silicon
+      without installing the x64 runtime under Rosetta 2. net8.0 runs natively everywhere.
+    -->
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
