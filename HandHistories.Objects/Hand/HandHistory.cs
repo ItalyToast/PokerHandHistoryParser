@@ -36,7 +36,7 @@ namespace HandHistories.Objects.Hand
         public Player Hero { get; set; }
 
         /// <summary>
-        /// True iff the hand reached the showdown phase with at least two players
+        /// True if the hand reached the showdown phase with at least two players
         /// still live (i.e. fewer than <c>Players.Count - 1</c> players folded).
         /// </summary>
         public bool WentToShowdown { get; set; }
