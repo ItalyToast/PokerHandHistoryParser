@@ -3,11 +3,25 @@ using HandHistories.Objects.Cards;
 using HandHistories.Objects.GameDescription;
 using HandHistories.Parser.UnitTests.Utils.IO;
 using System;
+using System.IO;
 
 namespace HandHistories.Parser.UnitTests.Parsers.Base
 {
     internal class SampleHandHistoryRepositoryFileBasedImpl : ISampleHandHistoryRepository
     {
+        private static readonly Encoding StrictUtf8 = Encoding.GetEncoding(
+            Encoding.UTF8.WebName,
+            EncoderFallback.ExceptionFallback,
+            DecoderFallback.ExceptionFallback);
+
+        private static readonly Encoding Windows1252 = GetWindows1252();
+
+        private static Encoding GetWindows1252()
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            return Encoding.GetEncoding(1252);
+        }
+
         private readonly IFileReader _fileReader;
         private readonly string _version;
 
@@ -92,7 +106,29 @@ namespace HandHistories.Parser.UnitTests.Parsers.Base
                 return null;
             }
 
-            return _fileReader.ReadAllText(path, Encoding.UTF8);
+            return ReadSampleFile(path);
+        }
+
+        private static string ReadSampleFile(string path)
+        {
+            byte[] bytes = File.ReadAllBytes(path);
+
+            int start = 0;
+            int length = bytes.Length;
+            if (length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
+            {
+                start = 3;
+                length -= 3;
+            }
+
+            try
+            {
+                return StrictUtf8.GetString(bytes, start, length);
+            }
+            catch (DecoderFallbackException)
+            {
+                return Windows1252.GetString(bytes, start, length);
+            }
         }
 
         private string GetSampleHandHistoryFolder(PokerFormat pokerFormat, SiteName siteName)
