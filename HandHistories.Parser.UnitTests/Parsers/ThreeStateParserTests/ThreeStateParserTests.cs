@@ -51,7 +51,7 @@ namespace HandHistories.Parser.UnitTests.Parsers.ThreeStateParserTests
         string[] GetTest(string test, string name)
         {
             return SampleHandHistoryRepository.GetHandExample(PokerFormat.CashGame, Site, test, name)
-                .Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         protected abstract List<HandAction> ExpectedHandActionsAnte { get; }
