@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
@@ -53,15 +53,15 @@ namespace HandHistories.Objects.GameDescription
                 case Currency.USD:
                     return @"$";
                 case Currency.EURO:
-                    return @"€";
+                    return @"â‚¬";
                 case Currency.GBP:
-                    return @"£";
+                    return @"Â£";
                 case Currency.SEK:
                     return "SEK";
                 case Currency.CHIPS:
                     return "";
                 case Currency.CNY:
-                    return @"¥";
+                    return @"Â¥";
                 case Currency.All:
                     return @"";
                 default:
