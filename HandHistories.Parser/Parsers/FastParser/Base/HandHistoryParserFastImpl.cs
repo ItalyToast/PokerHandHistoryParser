@@ -140,6 +140,14 @@ namespace HandHistories.Parser.Parsers.FastParser.Base
         {
         }
 
+        // Hook for sites whose action stream omits SHOW/MUCKS for cards that surface
+        // only in the SUMMARY block (e.g. PokerStars uncontested-winner flashes,
+        // PPPoker showdowns). Implementations append synthetic HandActions to
+        // hand.HandActions before ShowdownAnalyzer runs.
+        protected virtual void EmitSummaryShowdownActions(string[] handLines, HandHistory hand)
+        {
+        }
+
         public HandHistory ParseFullHandHistory(string handText, bool rethrowExceptions = false)
         {
             try
@@ -257,6 +265,8 @@ namespace HandHistories.Parser.Parsers.FastParser.Base
                 }
 
                 FinalizeHandHistory(handHistory);
+
+                EmitSummaryShowdownActions(handLines, handHistory);
 
                 ShowdownAnalyzer.Populate(handHistory);
 

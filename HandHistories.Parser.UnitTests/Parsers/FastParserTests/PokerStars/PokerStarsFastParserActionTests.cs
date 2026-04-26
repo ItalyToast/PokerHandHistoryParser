@@ -345,5 +345,34 @@ Total pot $50.00 | Rake $2.50";
             Assert.IsFalse(handHistory.Players["11856112"].hasHoleCards, "Player 11856112 should not have hole cards");
             Assert.IsFalse(handHistory.Players["11270058"].hasHoleCards, "Player 11270058 should not have hole cards");
         }
+
+        [Test]
+        public void PPPokerShowdownHand_RevealActionsDerivedFromSummary()
+        {
+            var parser = new PokerStarsFastParserImpl(SiteName.PPPoker);
+            string pppokerHand = SampleHandHistoryRepository.GetHandExample(PokerFormat.CashGame, Site, "PPPoker", "ShowdownHand");
+
+            var handHistory = parser.ParseFullHandHistory(pppokerHand);
+
+            Assert.IsTrue(handHistory.WentToShowdown, "Two players reached showdown");
+            Assert.AreEqual(RevealAction.ShownAtShowdown, handHistory.Players["11641651"].RevealAction);
+            Assert.AreEqual(RevealAction.ShownAtShowdown, handHistory.Players["10284118"].RevealAction);
+            Assert.AreEqual(RevealAction.NotShown, handHistory.Players["11856112"].RevealAction);
+            Assert.AreEqual(RevealAction.NotShown, handHistory.Players["11270058"].RevealAction);
+        }
+
+        [Test]
+        public void UncontestedWinnerFlash_RevealsAsShownVoluntarily()
+        {
+            var parser = new PokerStarsFastParserImpl();
+            string handText = SampleHandHistoryRepository.GetHandExample(PokerFormat.CashGame, Site, "ExtraHands", "UncontestedWinnerFlash");
+
+            var handHistory = parser.ParseFullHandHistory(handText);
+
+            Assert.IsFalse(handHistory.WentToShowdown, "Both opponents folded preflop");
+            Assert.AreEqual(RevealAction.ShownVoluntarily, handHistory.Players["HeroFlash"].RevealAction);
+            Assert.AreEqual(RevealAction.NotShown, handHistory.Players["VictimSB"].RevealAction);
+            Assert.AreEqual(RevealAction.NotShown, handHistory.Players["VictimBB"].RevealAction);
+        }
     }
 }
