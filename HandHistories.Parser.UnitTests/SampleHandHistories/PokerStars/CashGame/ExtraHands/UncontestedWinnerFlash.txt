@@ -1,0 +1,19 @@
+PokerStars Game #999000000001:  Hold'em No Limit ($0.05/$0.10 USD) - 2026/04/26 12:00:00 ET
+Table 'FlashTest 1' 6-max Seat #1 is the button
+Seat 1: HeroFlash ($10 in chips)
+Seat 2: VictimSB ($10 in chips)
+Seat 3: VictimBB ($10 in chips)
+VictimSB: posts small blind $0.05
+VictimBB: posts big blind $0.10
+*** HOLE CARDS ***
+Dealt to HeroFlash [As Ah]
+HeroFlash: raises $0.30 to $0.40
+VictimSB: folds
+VictimBB: folds
+Uncalled bet ($0.30) returned to HeroFlash
+HeroFlash collected $0.20 from pot
+*** SUMMARY ***
+Total pot $0.20 | Rake $0
+Seat 1: HeroFlash (button) showed [As Ah] and won ($0.20) with a pair of Aces
+Seat 2: VictimSB (small blind) folded before Flop
+Seat 3: VictimBB (big blind) folded before Flop

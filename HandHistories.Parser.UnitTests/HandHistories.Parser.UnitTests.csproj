@@ -1320,6 +1320,9 @@
     <None Update="SampleHandHistories\PokerStars\CashGame\ExtraHands\TableNameWithDash.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="SampleHandHistories\PokerStars\CashGame\ExtraHands\UncontestedWinnerFlash.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="SampleHandHistories\PokerStars\CashGame\ExtraHands\ZoomHand.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -1476,6 +1476,94 @@ namespace HandHistories.Parser.Parsers.FastParser.PokerStars
             return playerList;
         }
 
+        // PokerStars (and PPPoker via this same parser) sometimes reveal cards only in
+        // the SUMMARY block: an uncontested winner who flashes ("Seat X: name (button)
+        // showed [..]" with no *** SHOW DOWN *** section), or a PPPoker showdown whose
+        // SHOW DOWN section contains only a collection line. ParseMiscShowdownLine never
+        // sees those lines, so the action stream is missing a SHOW. Append a synthetic
+        // one so ShowdownAnalyzer can derive RevealAction without a side channel.
+        protected override void EmitSummaryShowdownActions(string[] handLines, HandHistory hand)
+        {
+            if (hand?.HandActions == null || handLines == null || handLines.Length == 0)
+            {
+                return;
+            }
+
+            int summaryIndex = GetSummaryStartIndex(handLines, 0);
+            if (summaryIndex == -1)
+            {
+                return;
+            }
+
+            int showDownIndex = GetShowDownStartIndex(handLines, 0, summaryIndex);
+            bool isPPPokerHand = handLines[0].StartsWithFast("PPPoker Hand #");
+
+            var alreadyShown = new HashSet<string>(hand.HandActions
+                .Where(a => a.HandActionType == HandActionType.SHOW || a.HandActionType == HandActionType.SHOWS_FOR_LOW)
+                .Select(a => a.PlayerName));
+
+            // PokerStars uncontested-winner flash: no SHOW DOWN section but summary
+            // "Seat X: name [(position)] showed [..]" reveals cards. Analyzer maps
+            // SHOW + !WentToShowdown → ShownVoluntarily.
+            if (showDownIndex == -1 && !isPPPokerHand)
+            {
+                for (int i = summaryIndex; i < handLines.Length; i++)
+                {
+                    string line = handLines[i];
+                    if (!line.Contains("showed ["))
+                    {
+                        continue;
+                    }
+
+                    int nameExtraOffset = 0;
+                    switch (line)
+                    {
+                        case string s when s.Contains("(button) "):
+                            nameExtraOffset = 9;
+                            break;
+                        case string s when s.Contains("(big blind) "):
+                            nameExtraOffset = 12;
+                            break;
+                        case string s when s.Contains("(small blind) "):
+                            nameExtraOffset = 14;
+                            break;
+                    }
+
+                    int nameStart = line.IndexOfFast(": ") + 2;
+                    int nameEnd = line.IndexOfFast("showed [") - 1 - nameExtraOffset;
+                    string name = line.Substring(nameStart, nameEnd - nameStart);
+
+                    if (alreadyShown.Add(name))
+                    {
+                        hand.HandActions.Add(new HandAction(name, HandActionType.SHOW, Street.Showdown));
+                    }
+                }
+            }
+
+            // PPPoker showdown reveal: cards only in summary as "Seat X: id showed [..]".
+            // Analyzer maps SHOW + WentToShowdown → ShownAtShowdown.
+            if (isPPPokerHand)
+            {
+                for (int i = summaryIndex; i < handLines.Length; i++)
+                {
+                    string line = handLines[i];
+                    if (!line.StartsWithFast("Seat ") || !line.Contains("showed ["))
+                    {
+                        continue;
+                    }
+
+                    int nameStart = line.IndexOfFast(": ") + 2;
+                    int spaceAfterName = line.IndexOfFast(" ", nameStart);
+                    string name = line.Substring(nameStart, spaceAfterName - nameStart);
+
+                    if (alreadyShown.Add(name))
+                    {
+                        hand.HandActions.Add(new HandAction(name, HandActionType.SHOW, Street.Showdown));
+                    }
+                }
+            }
+        }
+
         private int GetDealtToHeroLineIndex(string[] handLines, int lastLineRead)
         {
             for (int i = lastLineRead; i < handLines.Length; i++)
